@@ -1,0 +1,16 @@
+{
+  "name": "edu-system-web",
+  "main": "index.js",
+  "version": "0.1.0",
+  "homepage": "https://github.com/nwoedf/edu-system-web",
+  "authors": [
+    "Tommy Chan <ckchan.cs@gmail.com>"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

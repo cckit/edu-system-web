@@ -1,0 +1,25 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
+<body>
+    <img id="kinect-image" />
+    <script src="socket.io.js"></script>
+    <script src="jquery.min.js"></script>
+    <script>
+    console.log('Start connecting');
+    var socket = io();
+    socket.on('connect', function() {
+        console.log('Server connected');
+        socket.emit('whoami', 'front');
+    });
+    socket.on('kinect-image', function(data) {
+        $('#kinect-image').attr('src', 'data:image/jpg;base64,' + data);
+    });
+
+    </script>
+</body>
+
+</html>

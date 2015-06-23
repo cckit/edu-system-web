@@ -1,0 +1,19 @@
+{
+  "name": "edu-system-web",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://nwoedf@github.com/nwoedf/edu-system-web.git"
+  },
+  "author": "Tommy Chan",
+  "bugs": {
+    "url": "https://github.com/nwoedf/edu-system-web/issues"
+  },
+  "homepage": "https://github.com/nwoedf/edu-system-web#readme",
+  "dependencies": {
+    "express": "^4.13.0",
+    "socket.io": "^1.3.5"
+  }
+}
