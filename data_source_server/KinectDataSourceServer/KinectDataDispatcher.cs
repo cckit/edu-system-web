@@ -53,16 +53,28 @@ namespace KinectDataSourceServer
         private void sensor_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
         {
             handleSkeletonFrame(e.OpenSkeletonFrame());
+            this.dispatchData(kinectFramesHandler =>
+            {
+                kinectFramesHandler.SkeletonRawFrameCallback(e);
+            });
         }
 
         private void sensor_DepthFrameReady(object sender, DepthImageFrameReadyEventArgs e)
         {
             handleDepthImageFrame(e.OpenDepthImageFrame());
+            this.dispatchData(kinectFramesHandler =>
+            {
+                kinectFramesHandler.DepthRawFrameCallback(e);
+            });
         }
 
         private void sensor_ColorFrameReady(object sender, ColorImageFrameReadyEventArgs e)
         {
             handleColorImageFrame(e.OpenColorImageFrame());
+            this.dispatchData(kinectFramesHandler =>
+            {
+                kinectFramesHandler.ColorRawFrameCallback(e);
+            });
         }
 
         private void sensor_AllFramesReady(object sender, AllFramesReadyEventArgs e)
@@ -70,6 +82,10 @@ namespace KinectDataSourceServer
             handleSkeletonFrame(e.OpenSkeletonFrame());
             handleDepthImageFrame(e.OpenDepthImageFrame());
             handleColorImageFrame(e.OpenColorImageFrame());
+            this.dispatchData(kinectFramesHandler =>
+            {
+                kinectFramesHandler.AllRawFrameCallback(e);
+            });
         }
 
         private void dispatchData(Action<AbstractKinectFramesHandler> callback)
