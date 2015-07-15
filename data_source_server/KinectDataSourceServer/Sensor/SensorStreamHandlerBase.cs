@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DataSourceServer.Message;
+using Microsoft.Kinect;
 
 namespace KinectDataSourceServer.Sensor
 {
@@ -18,13 +19,13 @@ namespace KinectDataSourceServer.Sensor
             this.streamHandlerConfiguration = new Dictionary<string, StreamConfiguration>();
         }
 
-        public virtual void OnSensorChanged(Microsoft.Kinect.KinectSensor newSensor) { }
+        public virtual void OnSensorChanged(KinectSensor newSensor) { }
 
-        public virtual void ProcessColor(byte[] colorData, Microsoft.Kinect.ColorImageFrame colorFrame) { }
+        public virtual void ProcessColor(byte[] colorData, ColorImageFrame colorFrame) { }
 
-        public virtual void ProcessDepth(Microsoft.Kinect.DepthImagePixel[] depthData, Microsoft.Kinect.DepthImageFrame depthFrame) { }
+        public virtual void ProcessDepth(DepthImagePixel[] depthData, DepthImageFrame depthFrame) { }
 
-        public virtual void ProcessSkeleton(Microsoft.Kinect.Skeleton[] skeletons, Microsoft.Kinect.SkeletonFrame skeletonFrame) { }
+        public virtual void ProcessSkeleton(Skeleton[] skeletons, SkeletonFrame skeletonFrame) { }
 
         public virtual string[] GetSupportedStreamNames()
         {

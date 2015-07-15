@@ -1,4 +1,4 @@
-﻿namespace DataSourceServer.Message
+﻿namespace DataSourceServer.Message.Event
 {
     public class EventMessage
     {

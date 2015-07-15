@@ -89,7 +89,6 @@
     <Compile Include="Sensor\SensorStatusStreamHandler.cs" />
     <Compile Include="Sensor\SensorStreamHandlerBase.cs" />
     <Compile Include="Sensor\SensorStreamHandlerFactory.cs" />
-    <Compile Include="Sensor\Serialization\Message\SensorStatusEventMessage.cs" />
     <Compile Include="SharedConstants.cs" />
   </ItemGroup>
   <ItemGroup>

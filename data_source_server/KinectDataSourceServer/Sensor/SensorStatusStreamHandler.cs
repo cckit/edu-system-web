@@ -1,5 +1,5 @@
 ﻿using DataSourceServer.Message;
-using KinectDataSourceServer.Sensor.Serialization.Message;
+using DataSourceServer.Message.Event;
 using Microsoft.Kinect;
 
 namespace KinectDataSourceServer.Sensor
@@ -19,7 +19,7 @@ namespace KinectDataSourceServer.Sensor
 
         }
 
-        public async override void OnSensorChanged(Microsoft.Kinect.KinectSensor newSensor)
+        public async override void OnSensorChanged(KinectSensor newSensor)
         {
             if (this.sensor != newSensor)
             {
