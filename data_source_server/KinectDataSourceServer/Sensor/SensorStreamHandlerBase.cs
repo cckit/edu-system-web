@@ -9,7 +9,9 @@ namespace KinectDataSourceServer.Sensor
     public abstract class SensorStreamHandlerBase : ISensorStreamHandler
     {
         protected SensorStreamHandlerContext Context { get; private set; }
+        public const string EnabledPropertyName = "enabled";
 
+        private readonly IDictionary<string, object> errorSink = new Dictionary<string, object>();
         private readonly Dictionary<string, StreamConfiguration> streamHandlerConfiguration;
         private string[] supportedStreams;
 
@@ -41,6 +43,62 @@ namespace KinectDataSourceServer.Sensor
         {
             this.streamHandlerConfiguration.Add(name, configuration);
             this.supportedStreams = null;
+        }
+
+        public IDictionary<string, object> GetState(string streamName)
+        {
+            var propertyMap = new Dictionary<string, object>();
+
+            StreamConfiguration config;
+            if (!this.streamHandlerConfiguration.TryGetValue(streamName, out config))
+            {
+                throw new ArgumentException(@"Unsupported stream name", "streamName");
+            }
+
+            config.GetPropertiesCallback(propertyMap);
+            return propertyMap;
+        }
+
+        public bool SetState(string streamName, IReadOnlyDictionary<string, object> properties, IDictionary<string, object> errors)
+        {
+            bool successful = true;
+
+            if (properties == null)
+            {
+                throw new ArgumentException(@"properties must not be null", "properties");
+            }
+
+            if (errors == null)
+            {
+                this.errorSink.Clear();
+                errors = this.errorSink;
+            }
+
+            StreamConfiguration config;
+            if (!this.streamHandlerConfiguration.TryGetValue(streamName, out config))
+            {
+                throw new ArgumentException(@"Unsupported stream name", "streamName");
+            }
+
+            foreach (var keyValuePair in properties)
+            {
+                try
+                {
+                    var error = config.SetPropertyCallback(keyValuePair.Key, keyValuePair.Value);
+                    if (error != null)
+                    {
+                        errors.Add(keyValuePair.Key, error);
+                        successful = false;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    successful = false;
+                    errors.Add(keyValuePair.Key, Properties.Resources.PropertySetError);
+                }
+            }
+
+            return successful;
         }
 
         protected class StreamConfiguration

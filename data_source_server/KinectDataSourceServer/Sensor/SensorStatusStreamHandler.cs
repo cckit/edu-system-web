@@ -1,4 +1,5 @@
-﻿using DataSourceServer.Message;
+﻿using System.Collections.Generic;
+using DataSourceServer.Message;
 using DataSourceServer.Message.Event;
 using Microsoft.Kinect;
 
@@ -12,11 +13,12 @@ namespace KinectDataSourceServer.Sensor
         internal const string SensorStreamName = "sensorStatus";
         internal const string SensorStatusEventCategory = "sensorStatus";
         internal const string SensorStatusEventType = "statusChanged";
+        internal const string SensorStatusConnectedPropertyName = "connected";
 
         internal SensorStatusStreamHandler(SensorStreamHandlerContext context)
             : base(context)
         {
-
+            this.AddStreamConfiguration(SensorStreamName, new StreamConfiguration(this.GetSensorStreamProperties, this.SetSensorStreamProperty));
         }
 
         public async override void OnSensorChanged(KinectSensor newSensor)
@@ -38,6 +40,23 @@ namespace KinectDataSourceServer.Sensor
             }
 
             this.sensor = newSensor;
+        }
+
+        private void GetSensorStreamProperties(Dictionary<string, object> propertyMap)
+        {
+            propertyMap.Add(SensorStatusConnectedPropertyName, this.isConnected);
+        }
+
+        private string SetSensorStreamProperty(string propertyName, object propertyValue)
+        {
+            if (propertyName == SensorStatusConnectedPropertyName)
+            {
+                return Properties.Resources.PropertyReadOnly;
+            }
+            else
+            {
+                return Properties.Resources.PropertyNameUnrecognized;
+            }
         }
     }
 }

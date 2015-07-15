@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using DataSourceServer.Message.Event;
 
 namespace DataSourceServer.Message
 {

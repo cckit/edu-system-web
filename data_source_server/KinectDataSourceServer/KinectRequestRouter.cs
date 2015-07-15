@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using DataSourceServer;
 using DataSourceServer.Channel;
 using DataSourceServer.Message;
+using DataSourceServer.Message.Event;
 using KinectDataSourceServer.Sensor;
 using SuperWebSocket;
 
@@ -115,6 +116,33 @@ namespace KinectDataSourceServer
             var remainingSubpath = (delimiterIndex < 0) ? null : path.Substring(delimiterIndex);
 
             return new Tuple<string, string>(firstComponent, remainingSubpath);
+        }
+
+        private void HandleGetStateRequest(WebSocketSession session)
+        {
+            var responseProperties = new Dictionary<string, object>();
+            foreach (var mapEntry in this.streamHandlerMap)
+            {
+                var handlerStatus = mapEntry.Value.GetState(mapEntry.Key);
+                responseProperties.Add(mapEntry.Key, handlerStatus);
+            }
+
+            string json = responseProperties.DictionaryToJson();
+            session.Send(json);
+        }
+
+        private void HandleStateRequest(WebSocketSession session)
+        {
+            switch (session.Method)
+            {
+                case "GET":
+                    this.HandleGetStateRequest(session);
+                    break;
+
+                default:
+                    session.CloseWithHandshake(405, "MethodNotAllowed");
+                    break;
+            }
         }
 
         private void HandleEventRequest(WebSocketSession session)
