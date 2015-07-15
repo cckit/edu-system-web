@@ -25,6 +25,7 @@ namespace KinectDataSourceServer.Sensor
         {
             var streamHandlerTypes = new[]
             {
+                StreamHandlerType.BackgroundRemoval,
                 StreamHandlerType.SensorStatus
             };
 

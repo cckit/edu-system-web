@@ -8,6 +8,8 @@ using DataSourceServer;
 using DataSourceServer.Channel;
 using DataSourceServer.Message;
 using DataSourceServer.Message.Event;
+using DataSourceServer.Message.Stream;
+using DataSourceServer.Serialization;
 using KinectDataSourceServer.Sensor;
 using SuperWebSocket;
 
@@ -21,6 +23,7 @@ namespace KinectDataSourceServer
         private readonly Dictionary<string, string> uriName2StreamNameMap;
 
         private List<WebSocketEventChannel> eventChannels;
+        private List<WebSocketEventChannel> streamChannels;
 
         public const string StreamUriSubpath = "STREAM";
         public const string EventsUriSubpath = "EVENTS";
@@ -42,6 +45,7 @@ namespace KinectDataSourceServer
             this.streamHandlerMap = new Dictionary<string, ISensorStreamHandler>();
             this.uriName2StreamNameMap = new Dictionary<string, string>();
             this.eventChannels = new List<WebSocketEventChannel>();
+            this.streamChannels = new List<WebSocketEventChannel>();
 
             Initialize(streamHandlerFactories);
         }
@@ -50,8 +54,8 @@ namespace KinectDataSourceServer
         {
             this.StreamHandlers = new ISensorStreamHandler[streamHandlerFactories.Count];
 
-            var streamHandlerContext = new SensorStreamHandlerContext(this.SendEventMessageAsync);
             var normalizedNameSet = new HashSet<string>();
+            var streamHandlerContext = new SensorStreamHandlerContext(this.SendEventMessageAsync, this.SendStreamMessageAsync);
 
             for (int i = 0; i < streamHandlerFactories.Count; i++)
             {
@@ -103,6 +107,23 @@ namespace KinectDataSourceServer
             }
         }
 
+        private async Task SendStreamMessageAsync(StreamMessage message, byte[] binaryPayload)
+        {
+            var webSocketMessage = message.ToTextMessage();
+
+            foreach (var channel in this.streamChannels.SafeCopy())
+            {
+                if (binaryPayload != null)
+                {
+                    channel.SendMessage(webSocketMessage, new WebSocketMessage(new ArraySegment<byte>(binaryPayload)));
+                }
+                else
+                {
+                    channel.SendMessage(webSocketMessage);
+                }
+            }
+        }
+
         private Tuple<string, string> SplitUriSubpath(string path)
         {
             if (!path.StartsWith("/", StringComparison.OrdinalIgnoreCase))
@@ -145,18 +166,33 @@ namespace KinectDataSourceServer
             }
         }
 
+        private void HandleStreamRequest(WebSocketSession session)
+        {
+            WebSocketEventChannel.TryOpen(session,
+                channel =>
+                {
+                    this.streamChannels.Add(channel);
+                    Console.WriteLine("New stream channel for {0} is added", session.Path);
+                },
+                channel =>
+                {
+                    this.streamChannels.Remove(channel);
+                    Console.WriteLine("Stream channel for {0} is removed", session.Path);
+                });
+        }
+
         private void HandleEventRequest(WebSocketSession session)
         {
             WebSocketEventChannel.TryOpen(session,
                 channel =>
                 {
                     this.eventChannels.Add(channel);
-                    Console.WriteLine("New channel for {0} is added", session.Path);
+                    Console.WriteLine("New event channel for {0} is added", session.Path);
                 },
                 channel =>
                 {
                     this.eventChannels.Remove(channel);
-                    Console.WriteLine("Channel for {0} is removed", session.Path);
+                    Console.WriteLine("Event channel for {0} is removed", session.Path);
                 });
         }
 
@@ -182,11 +218,11 @@ namespace KinectDataSourceServer
                 switch (pathComponent)
                 {
                     case StateUriSubpath:
-                        //await this.HandleStateRequest(requestContext);
+                        this.HandleStateRequest(session);
                         break;
 
                     case StreamUriSubpath:
-                        //this.HandleStreamRequest(requestContext);
+                        this.HandleStreamRequest(session);
                         break;
 
                     case EventsUriSubpath:

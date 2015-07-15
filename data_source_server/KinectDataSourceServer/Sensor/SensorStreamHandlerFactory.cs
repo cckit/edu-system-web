@@ -5,6 +5,7 @@ namespace KinectDataSourceServer.Sensor
 {
     public enum StreamHandlerType
     {
+        BackgroundRemoval,
         SensorStatus,
     }
 
@@ -21,6 +22,8 @@ namespace KinectDataSourceServer.Sensor
         {
             switch (streamType)
             {
+                case StreamHandlerType.BackgroundRemoval:
+                    return new BackgroundRemovalStreamHandler(context);
                 case StreamHandlerType.SensorStatus:
                     return new SensorStatusStreamHandler(context);
                 default:
