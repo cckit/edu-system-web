@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Serialization;
 using System.Threading.Tasks;
 using DataSourceServer;
 using DataSourceServer.Channel;
@@ -11,6 +12,7 @@ using DataSourceServer.Message.Event;
 using DataSourceServer.Message.Stream;
 using DataSourceServer.Serialization;
 using KinectDataSourceServer.Sensor;
+using Newtonsoft.Json.Linq;
 using SuperWebSocket;
 
 namespace KinectDataSourceServer
@@ -97,12 +99,18 @@ namespace KinectDataSourceServer
 
         private async Task SendEventMessageAsync(EventMessage message)
         {
+            var webSocketMessage = message.ToTextMessage();
+
             foreach (var channel in this.eventChannels.SafeCopy())
             {
-                bool success = channel.SendMessage(message.ToTextMessage());
+                bool success = channel.SendMessage(webSocketMessage);
                 if (!success)
                 {
                     Console.WriteLine("Cannot send event message to a channel");
+                }
+                else
+                {
+                    Console.WriteLine("Sent an event message to a channel");
                 }
             }
         }
@@ -139,6 +147,78 @@ namespace KinectDataSourceServer
             return new Tuple<string, string>(firstComponent, remainingSubpath);
         }
 
+        private void HandlePostStateRequest(WebSocketSession session, string message)
+        {
+            Dictionary<string, object> requestProperties;
+
+            try
+            {
+                requestProperties = message.DictionaryFromJson();
+            }
+            catch (SerializationException)
+            {
+                requestProperties = null;
+            }
+
+            if (requestProperties == null)
+            {
+                return;
+            }
+
+            var responseProperties = new Dictionary<string, object>();
+            var errorStreamNames = new List<string>();
+
+            foreach (var requestEntry in requestProperties)
+            {
+                ISensorStreamHandler handler;
+                if (!this.streamHandlerMap.TryGetValue(requestEntry.Key, out handler))
+                {
+                    // Don't process unrecognized handlers
+                    responseProperties.Add(requestEntry.Key, Properties.Resources.StreamNameUnrecognized);
+                    errorStreamNames.Add(requestEntry.Key);
+                    continue;
+                }
+
+                var typ = requestEntry.Value.GetType();
+                Dictionary<string, object> propertiesToSet = null;
+                if ("JObject".Equals(typ.Name))
+                {
+                    propertiesToSet = (requestEntry.Value as JObject).ToObject<Dictionary<string, object>>();
+                }
+                else
+                {
+                    System.Console.WriteLine();
+                }
+
+                if (propertiesToSet == null)
+                {
+                    continue;
+                }
+
+                var propertyErrors = new Dictionary<string, object>();
+                var success = handler.SetState(requestEntry.Key, new ReadOnlyDictionary<string, object>(propertiesToSet), propertyErrors);
+
+                if (!success)
+                {
+                    responseProperties.Add(requestEntry.Key, propertyErrors);
+                    errorStreamNames.Add(requestEntry.Key);
+                }
+            }
+
+            if (errorStreamNames.Count == 0)
+            {
+                responseProperties.Add(SuccessPropertyName, true);
+            }
+            else
+            {
+                responseProperties.Add(SuccessPropertyName, false);
+                responseProperties.Add(ErrorsPropertyName, errorStreamNames.ToArray());
+            }
+
+            string responseJson = responseProperties.DictionaryToJson();
+            session.Send(responseJson);
+        }
+
         private void HandleGetStateRequest(WebSocketSession session)
         {
             var responseProperties = new Dictionary<string, object>();
@@ -149,21 +229,8 @@ namespace KinectDataSourceServer
             }
 
             string json = responseProperties.DictionaryToJson();
+            Console.WriteLine(json);
             session.Send(json);
-        }
-
-        private void HandleStateRequest(WebSocketSession session)
-        {
-            switch (session.Method)
-            {
-                case "GET":
-                    this.HandleGetStateRequest(session);
-                    break;
-
-                default:
-                    session.CloseWithHandshake(405, "MethodNotAllowed");
-                    break;
-            }
         }
 
         private void HandleStreamRequest(WebSocketSession session)
@@ -196,6 +263,60 @@ namespace KinectDataSourceServer
                 });
         }
 
+        public override void OnNewMessage(WebSocketSession session, string message, string subPath)
+        {
+            if (string.IsNullOrEmpty(subPath))
+            {
+                throw new ArgumentNullException("path");
+            }
+
+            var splitPath = SplitUriSubpath(subPath);
+
+            if (splitPath == null)
+            {
+                session.CloseWithHandshake(404, "Not Found");
+                return;
+            }
+
+            var pathComponent = splitPath.Item1;
+
+            try
+            {
+                switch (pathComponent)
+                {
+                    case StateUriSubpath:
+                        this.HandlePostStateRequest(session, message);
+                        break;
+
+                    default:
+                        var remainingSubpath = splitPath.Item2;
+                        if (remainingSubpath == null)
+                        {
+                            session.CloseWithHandshake(404, "Not Found");
+                            return;
+                        }
+
+                        string streamName;
+                        if (!this.uriName2StreamNameMap.TryGetValue(pathComponent, out streamName))
+                        {
+                            session.CloseWithHandshake(404, "Not Found");
+                            return;
+                        }
+
+                        var streamHandler = this.streamHandlerMap[streamName];
+
+                        // Handle request
+
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Trace.TraceError("Exception encountered while handling Kinect sensor request:\n{0}", e);
+                session.CloseWithHandshake(500, "Internal server error");
+            }
+        }
+
         public override void OnNewRequest(WebSocketSession session, string subPath)
         {
             if (string.IsNullOrEmpty(subPath))
@@ -218,7 +339,7 @@ namespace KinectDataSourceServer
                 switch (pathComponent)
                 {
                     case StateUriSubpath:
-                        this.HandleStateRequest(session);
+                        this.HandleGetStateRequest(session);
                         break;
 
                     case StreamUriSubpath:

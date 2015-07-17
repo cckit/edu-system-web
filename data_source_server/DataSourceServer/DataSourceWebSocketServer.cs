@@ -44,7 +44,7 @@ namespace DataSourceServer
 
         void webSocketServer_NewMessageReceived(WebSocketSession session, string message)
         {
-            session.Send("Server: " + message);
+            requestRouter.NewMessage(session, message);
         }
 
         void webSocketServer_NewSessionConnected(WebSocketSession session)

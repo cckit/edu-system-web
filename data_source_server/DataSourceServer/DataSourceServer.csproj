@@ -71,12 +71,17 @@
   <ItemGroup>
     <Compile Include="Channel\WebSocketEventChannel.cs" />
     <Compile Include="DataSourceWebSocketServer.cs" />
+    <Compile Include="Message\Event\StateMappingEntry.cs" />
+    <Compile Include="Message\Event\UserTrackingIdChangedEventMessage.cs" />
     <Compile Include="Message\Stream\BackgroundRemovalStreamMessage.cs" />
     <Compile Include="Message\Event\EventMessage.cs" />
     <Compile Include="Message\Event\SensorStatusEventMessage.cs" />
     <Compile Include="Message\SensorStreamHandlerContext.cs" />
     <Compile Include="Message\Stream\ImageHeaderStreamMessage.cs" />
+    <Compile Include="Message\Stream\InteractionStreamMessage.cs" />
+    <Compile Include="Message\Stream\MessageHandPointer.cs" />
     <Compile Include="Message\Stream\StreamMessage.cs" />
+    <Compile Include="Message\Event\UserStatesChangedEventMessage.cs" />
     <Compile Include="Message\WebSocketMessageExtensions.cs" />
     <Compile Include="Message\WebSocketMessage.cs" />
     <Compile Include="RequestRouter.cs" />

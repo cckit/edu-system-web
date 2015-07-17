@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 namespace DataSourceServer.Serialization
 {
     public static class JsonSerializationExtensions
@@ -51,7 +51,7 @@ namespace DataSourceServer.Serialization
         /// </returns>
         public static string ToJson<T>(this T obj)
         {
-            return (new JavaScriptSerializer()).Serialize(obj);
+            return JsonConvert.SerializeObject(obj);
         }
 
         /// <summary>
@@ -179,7 +179,7 @@ namespace DataSourceServer.Serialization
         /// </remarks>
         public static string DictionaryToJson(this IDictionary<string, object> dictionary)
         {
-            return (new JavaScriptSerializer()).Serialize(dictionary);
+            return JsonConvert.SerializeObject(dictionary);
         }
 
         /// <summary>
@@ -221,7 +221,7 @@ namespace DataSourceServer.Serialization
         {
             try
             {
-                return (new JavaScriptSerializer()).Deserialize<T>(input);
+                return JsonConvert.DeserializeObject<T>(input);
 
                 // Convert exceptions to Serialization exception to provide a single exception to
                 // catch for callers.
@@ -345,7 +345,7 @@ namespace DataSourceServer.Serialization
         {
             try
             {
-                return (new JavaScriptSerializer()).Deserialize<Dictionary<string, object>>(input);
+                return JsonConvert.DeserializeObject<Dictionary<string, object>>(input);
 
                 // Convert exceptions to Serialization exception to provide a single exception to
                 // catch for callers.

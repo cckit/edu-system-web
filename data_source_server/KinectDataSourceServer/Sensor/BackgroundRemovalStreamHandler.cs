@@ -265,7 +265,8 @@ namespace KinectDataSourceServer.Sensor
 
                     case TrackingIdPropertyName:
                         var oldTrackingId = this.trackingId;
-                        this.trackingId = (int)propertyValue;
+                        Int64 trackingiD = (Int64)propertyValue;
+                        this.trackingId = (int)trackingiD;
 
                         if (this.trackingId != oldTrackingId)
                         {
