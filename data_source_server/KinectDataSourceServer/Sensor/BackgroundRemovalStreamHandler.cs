@@ -154,7 +154,7 @@ namespace KinectDataSourceServer.Sensor
 
                 if (haveFrameData)
                 {
-                    await this.Context.SendStreamMessageWithDataAsync(this.backgroundRemovalStreamMessage, this.backgroundRemovalStreamMessage.Buffer);
+                    await this.Context.SendStreamMessageWithDataAsync(this.backgroundRemovalStreamMessage, this.backgroundRemovalStreamMessage.GetCompressedImage());
                 }
             }
             finally
@@ -202,7 +202,7 @@ namespace KinectDataSourceServer.Sensor
             message.trackedPlayerId = frame.TrackedPlayerId;
             message.averageDepth = frame.AverageDepth;
 
-            message.UpdateBuffer(frame.GetRawPixelData());
+            message.UpdateBuffer(frame.GetRawPixelData(), frame.Width, frame.Height);
         }
 
         private static Size GetColorImageSize(ColorImageFormat format)

@@ -254,9 +254,9 @@ namespace KinectDataSourceServer.Sensor.Interaction
                     this.userViewerStreamMessage.timestamp = depthFrame.Timestamp;
                     this.userViewerStreamMessage.width = this.userViewerColorizer.Width;
                     this.userViewerStreamMessage.height = this.userViewerColorizer.Height;
-                    this.userViewerStreamMessage.bufferLength = this.userViewerColorizer.Buffer.Length;
+                    this.userViewerStreamMessage.bufferLength = this.userViewerColorizer.CompressedBuffer.Length;
 
-                    await this.Context.SendStreamMessageWithDataAsync(this.userViewerStreamMessage, this.userViewerColorizer.Buffer);
+                    await this.Context.SendStreamMessageWithDataAsync(this.userViewerStreamMessage, this.userViewerColorizer.CompressedBuffer);
                 }
                 finally
                 {

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
+using DataSourceServer.Serialization;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.Interaction;
 
@@ -15,7 +17,8 @@ namespace KinectDataSourceServer.Sensor.Interaction
 
         public int Width { get; private set; }
         public int Height { get; private set; }
-        public byte[] Buffer { get; private set; }
+        private byte[] Buffer { get; set; }
+        public byte[] CompressedBuffer { get; private set; }
 
         public UserViewerColorizer(int width, int height)
         {
@@ -80,36 +83,23 @@ namespace KinectDataSourceServer.Sensor.Interaction
             int downscaleFactor = depthWidth / this.Width;
             Debug.Assert(depthHeight / this.Height == downscaleFactor, "Downscale factor in x and y dimensions should be exactly the same.");
 
-            int pixelDisplacementBetweenRows = depthWidth * downscaleFactor;
-
-            unsafe
+            this.Buffer = depthImagePixels
+                .Where((e, i) => (i % (downscaleFactor * downscaleFactor)) == 0)
+                .SelectMany((depthImagePixel =>
             {
-                fixed (byte* colorBufferPtr = this.Buffer)
+                short playerIndex = depthImagePixel.PlayerIndex;
+                if (playerIndex < 0 || playerIndex > playerColorLookupTable.Length)
                 {
-                    fixed (DepthImagePixel* depthImagePixelPtr = depthImagePixels)
-                    {
-                        fixed (int* playerColorLookupPtr = this.playerColorLookupTable)
-                        {
-                            // Write color values using int pointers instead of byte pointers,
-                            // since each color pixel is 32-bits wide.
-                            int* colorBufferIntPtr = (int*)colorBufferPtr;
-                            DepthImagePixel* currentPixelRowPtr = depthImagePixelPtr;
-
-                            for (int row = 0; row < depthHeight; row += downscaleFactor)
-                            {
-                                DepthImagePixel* currentPixelPtr = currentPixelRowPtr;
-                                for (int column = 0; column < depthWidth; column += downscaleFactor)
-                                {
-                                    *colorBufferIntPtr++ = playerColorLookupPtr[currentPixelPtr->PlayerIndex];
-                                    currentPixelPtr += downscaleFactor;
-                                }
-
-                                currentPixelRowPtr += pixelDisplacementBetweenRows;
-                            }
-                        }
-                    }
+                    Console.WriteLine("Player index out of bound");
+                    playerIndex = 0;
                 }
-            }
+
+                int colorForPlayer = playerColorLookupTable[playerIndex];
+
+                return BitConverter.GetBytes(colorForPlayer);
+            })).ToArray();
+
+            this.CompressedBuffer = this.Buffer.BitmapToPngImageStream(this.Width, this.Height).ToArray();
         }
 
         public void ResetColorLookupTable()
@@ -127,6 +117,11 @@ namespace KinectDataSourceServer.Sensor.Interaction
             {
                 this.ResetColorLookupTable();
                 return;
+            }
+
+            if (userInfos.Length > SharedConstants.MaxUsersTracked)
+            {
+                Console.WriteLine("Player index out of bound");
             }
 
             // Reset lookup table to have all player indexes map to default user color

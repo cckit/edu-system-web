@@ -1,4 +1,6 @@
-﻿namespace DataSourceServer.Message.Stream
+﻿using DataSourceServer.Serialization;
+
+namespace DataSourceServer.Message.Stream
 {
     public class BackgroundRemovalStreamMessage : ImageHeaderStreamMessage
     {
@@ -8,40 +10,17 @@
 
         public short averageDepth { get; set; }
 
-        public byte[] Buffer { get; set; }
+        private byte[] CompressedImage { get; set; }
 
-        public void UpdateBuffer(byte[] bgraData)
+        public void UpdateBuffer(byte[] bgraData, int width, int height)
         {
+            this.CompressedImage = bgraData.BitmapToPngImageStream(width, height).ToArray();
+            this.bufferLength = this.CompressedImage.Length;
+        }
 
-            if ((this.Buffer == null) || (this.Buffer.Length != this.bufferLength))
-            {
-                this.Buffer = new byte[this.bufferLength];
-            }
-
-            unsafe
-            {
-                fixed (byte* messageDataPtr = this.Buffer)
-                {
-                    fixed (byte* frameDataPtr = bgraData)
-                    {
-                        byte* messageDataPixelPtr = messageDataPtr;
-                        byte* frameDataPixelPtr = frameDataPtr;
-
-                        byte* messageDataPixelPtrEnd = messageDataPixelPtr + this.bufferLength;
-
-                        while (messageDataPixelPtr != messageDataPixelPtrEnd)
-                        {
-                            // Convert from BGRA to RGBA format
-                            *(messageDataPixelPtr++) = *(frameDataPixelPtr + 2);
-                            *(messageDataPixelPtr++) = *(frameDataPixelPtr + 1);
-                            *(messageDataPixelPtr++) = *frameDataPixelPtr;
-                            *(messageDataPixelPtr++) = *(frameDataPixelPtr + 3);
-
-                            frameDataPixelPtr += BackgroundRemovalStreamMessage.BytesPerPixel;
-                        }
-                    }
-                }
-            }
+        public byte[] GetCompressedImage()
+        {
+            return this.CompressedImage;
         }
     }
 }
