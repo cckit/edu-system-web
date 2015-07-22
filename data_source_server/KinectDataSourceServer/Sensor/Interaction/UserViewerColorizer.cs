@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Windows.Media;
 using DataSourceServer.Serialization;
 using Microsoft.Kinect;
 using Microsoft.Kinect.Toolkit.Interaction;
@@ -99,7 +100,7 @@ namespace KinectDataSourceServer.Sensor.Interaction
                 return BitConverter.GetBytes(colorForPlayer);
             })).ToArray();
 
-            this.CompressedBuffer = this.Buffer.BitmapToPngImageStream(this.Width, this.Height).ToArray();
+            this.CompressedBuffer = this.Buffer.BitmapToPngImageStream(PixelFormats.Bgra32, this.Width, this.Height).ToArray();
         }
 
         public void ResetColorLookupTable()

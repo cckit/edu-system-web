@@ -36,6 +36,33 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Emgu.CV">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.GPU">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.GPU.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.ML">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.ML.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.OCR">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.OCR.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.OpenCL">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.OpenCL.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.Stitching">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.Stitching.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.UI">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.CV.VideoStab">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.CV.VideoStab.dll</HintPath>
+    </Reference>
+    <Reference Include="Emgu.Util">
+      <HintPath>..\packages\Emgu2.9.0Beta.2.9.0\lib\Emgu.Util.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
@@ -76,6 +103,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -86,6 +114,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Sensor\HandExtractorStreamHandler.cs" />
     <Compile Include="Sensor\Interaction\DefaultUserStateManager.cs" />
     <Compile Include="Sensor\Interaction\InteractionStreamHandler.cs" />
     <Compile Include="KinectRequestRouter.cs" />
@@ -118,6 +147,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Sign-Language-with-Kinect\HandDetector\HandDetector.csproj">
+      <Project>{bbd51a33-04c7-4d11-9599-f29c05c2026b}</Project>
+      <Name>HandDetector</Name>
+    </ProjectReference>
     <ProjectReference Include="..\DataSourceServer\DataSourceServer.csproj">
       <Project>{ad8f8eab-fa1b-4d06-aa8f-314dbcbab877}</Project>
       <Name>DataSourceServer</Name>

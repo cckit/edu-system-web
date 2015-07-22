@@ -124,6 +124,11 @@ namespace KinectDataSourceServer.Sensor
                 return;
             }
 
+            using (var skeletonFrame = e.OpenSkeletonFrame())
+            {
+                HandleSkeletonFrame(skeletonFrame);
+            }
+
             using (var colorFrame = e.OpenColorImageFrame())
             {
                 HandleColorFrame(colorFrame);
@@ -132,11 +137,6 @@ namespace KinectDataSourceServer.Sensor
             using (var depthImageFrame = e.OpenDepthImageFrame())
             {
                 HandleDepthFrame(depthImageFrame);
-            }
-
-            using (var skeletonFrame = e.OpenSkeletonFrame())
-            {
-                HandleSkeletonFrame(skeletonFrame);
             }
         }
 

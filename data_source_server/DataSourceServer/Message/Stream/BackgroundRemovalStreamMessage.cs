@@ -1,4 +1,5 @@
-﻿using DataSourceServer.Serialization;
+﻿using System.Windows.Media;
+using DataSourceServer.Serialization;
 
 namespace DataSourceServer.Message.Stream
 {
@@ -14,7 +15,7 @@ namespace DataSourceServer.Message.Stream
 
         public void UpdateBuffer(byte[] bgraData, int width, int height)
         {
-            this.CompressedImage = bgraData.BitmapToPngImageStream(width, height).ToArray();
+            this.CompressedImage = bgraData.BitmapToPngImageStream(PixelFormats.Bgra32, width, height).ToArray();
             this.bufferLength = this.CompressedImage.Length;
         }
 

@@ -162,8 +162,10 @@ namespace KinectDataSourceServer.Sensor.Interaction
 
             try
             {
-                this.sensor.SkeletonStream.ChooseSkeletons(
-                    this.recommendedUserTrackingIds[0], this.recommendedUserTrackingIds[1]);
+                if (this.sensor != null)
+                {
+                    this.sensor.SkeletonStream.ChooseSkeletons(this.recommendedUserTrackingIds[0], this.recommendedUserTrackingIds[1]);
+                }
             }
             catch (InvalidOperationException)
             {

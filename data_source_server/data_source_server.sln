@@ -7,20 +7,36 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataSourceServer", "DataSou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KinectDataSourceServer", "KinectDataSourceServer\KinectDataSourceServer.csproj", "{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HandDetector", "..\..\Sign-Language-with-Kinect\HandDetector\HandDetector.csproj", "{BBD51A33-04C7-4D11-9599-F29C05C2026B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
 		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{AD8F8EAB-FA1B-4D06-AA8F-314DBCBAB877}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AD8F8EAB-FA1B-4D06-AA8F-314DBCBAB877}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8F8EAB-FA1B-4D06-AA8F-314DBCBAB877}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{AD8F8EAB-FA1B-4D06-AA8F-314DBCBAB877}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD8F8EAB-FA1B-4D06-AA8F-314DBCBAB877}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8F8EAB-FA1B-4D06-AA8F-314DBCBAB877}.Release|x64.ActiveCfg = Release|Any CPU
 		{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0E04DBC-E608-4CAA-97C2-BB64D9DAA6B6}.Release|x64.ActiveCfg = Release|Any CPU
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Debug|x64.ActiveCfg = Debug|x64
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Debug|x64.Build.0 = Debug|x64
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Release|x64.ActiveCfg = Release|x64
+		{BBD51A33-04C7-4D11-9599-F29C05C2026B}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

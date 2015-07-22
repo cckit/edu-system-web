@@ -13,8 +13,12 @@
 // imageName: Name used to refer to canvas ImageData object to receive data from
 //            ArrayBuffer.
 // imageBuffer: ArrayBuffer containing image data to copy to canvas ImageData structure.
-function processImageData(imageName, imageBuffer) {
-    var blob = new Blob([imageBuffer], {type: 'image/png'});
+function processImageData(imageName, imageBuffer, imageFormat) {
+    if (imageFormat === "bmp") {
+        var blob = new Blob([imageBuffer], {type: 'image/bmp'});
+    } else {
+        var blob = new Blob([imageBuffer], {type: 'image/png'});
+    }
     var url = URL.createObjectURL(blob);
 
     self.postMessage({ "message": "imageReady", "imageName": imageName, "imageUrl": url });
@@ -24,7 +28,7 @@ function processImageData(imageName, imageBuffer) {
 addEventListener('message', function (event) {
     switch (event.data.message) {
         case "processImageData":
-            processImageData(event.data.imageName, event.data.imageBuffer);
+            processImageData(event.data.imageName, event.data.imageBuffer, event.data.imageFormat);
             break;
     }
 });

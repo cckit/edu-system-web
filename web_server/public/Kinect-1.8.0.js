@@ -563,6 +563,7 @@ var Kinect = (function () {
         this.BACKGROUNDREMOVAL_STREAM_NAME = "backgroundRemoval";
         this.SKELETON_STREAM_NAME = "skeleton";
         this.SENSORSTATUS_STREAM_NAME = "sensorStatus";
+        this.HAND_EXTRACTOR_STREAM_NAME = "handExtractor";
 
         // Supported event categories and associated event types
         this.USERSTATE_EVENT_CATEGORY = "userState";
@@ -906,7 +907,7 @@ var KinectUI = (function () {
             // imageBuffer: ArrayBuffer containing image data
             // width: width of image corresponding to imageBuffer data
             // height: height of image corresponding to imageBuffer data
-            this.processImageData = function (imageName, imageBuffer, width, height) {
+            this.processImageData = function (imageName, imageBuffer, format, width, height) {
                 ensureInitialized();
 
                 if (!imageMetadataMap.hasOwnProperty(imageName)) {
@@ -939,7 +940,7 @@ var KinectUI = (function () {
                     workerThread.postMessage({ "message": "setImage", "imageName": imageName });
                 }
 
-                workerThread.postMessage({ "message": "processImageData", "imageName": imageName, "imageBuffer": imageBuffer });
+                workerThread.postMessage({ "message": "processImageData", "imageName": imageName, "imageBuffer": imageBuffer, "imageFormat": format });
             };
 
             // Associate specified image name with canvas ImageData object for future usage by
@@ -981,6 +982,7 @@ var KinectUI = (function () {
         var bindableStreamNames = {};
         bindableStreamNames[Kinect.USERVIEWER_STREAM_NAME] = true;
         bindableStreamNames[Kinect.BACKGROUNDREMOVAL_STREAM_NAME] = true;
+        bindableStreamNames[Kinect.HAND_EXTRACTOR_STREAM_NAME] = true;
         var imageWorkerManager = new ImageWorkerManager();
 
         //////////////////////////////////////////////////////////////
@@ -1655,7 +1657,7 @@ var KinectUI = (function () {
                 default:
                     if (bindableStreamNames[streamName]) {
                         // If this is one of the bindable stream names
-                        imageWorkerManager.processImageData(streamName, streamFrame.buffer, streamFrame.width, streamFrame.height);
+                        imageWorkerManager.processImageData(streamName, streamFrame.buffer, streamFrame.format, streamFrame.width, streamFrame.height);
                     }
                     break;
             }

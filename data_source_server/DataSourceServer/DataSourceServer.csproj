@@ -80,6 +80,7 @@
     <Compile Include="Message\Event\EventMessage.cs" />
     <Compile Include="Message\Event\SensorStatusEventMessage.cs" />
     <Compile Include="Message\SensorStreamHandlerContext.cs" />
+    <Compile Include="Message\Stream\HandExtractorStreamMessage.cs" />
     <Compile Include="Message\Stream\ImageHeaderStreamMessage.cs" />
     <Compile Include="Message\Stream\InteractionStreamMessage.cs" />
     <Compile Include="Message\Stream\MessageHandPointer.cs" />

@@ -146,14 +146,19 @@
                     immediateConfig[Kinect.BACKGROUNDREMOVAL_STREAM_NAME] = {
                         "resolution": streamImageResolution
                     };
+                    immediateConfig[Kinect.HAND_EXTRACTOR_STREAM_NAME] = {
+                        "resolution": streamImageResolution
+                    };
 
                     setCursorVisibility(newHasEngagedUser);
                     setCanvasVisibility(userViewerCanvasElement, !newHasEngagedUser);
                     setCanvasVisibility(backgroundRemovalCanvasElement, newHasEngagedUser);
+                    setCanvasVisibility(handExtractorCanvasElement, newHasEngagedUser);
 
                     if (newHasEngagedUser) {
                         immediateConfig[Kinect.BACKGROUNDREMOVAL_STREAM_NAME].enabled = true;
                         immediateConfig[Kinect.BACKGROUNDREMOVAL_STREAM_NAME].trackingId = newEngagedUser;
+                        immediateConfig[Kinect.HAND_EXTRACTOR_STREAM_NAME].enabled = true;
 
                         delayedConfig[Kinect.USERVIEWER_STREAM_NAME] = {
                             "enabled": false
@@ -163,6 +168,10 @@
 
                         if (hasEngagedUser) {
                             delayedConfig[Kinect.BACKGROUNDREMOVAL_STREAM_NAME] = {
+                                "enabled": false
+                            };
+
+                            delayedConfig[Kinect.HAND_EXTRACTOR_STREAM_NAME] = {
                                 "enabled": false
                             };
                         }
@@ -233,8 +242,10 @@
         cursor = uiAdapter.createDefaultCursor();
         userViewerCanvasElement = document.getElementById("userViewerCanvas");
         backgroundRemovalCanvasElement = document.getElementById("backgroundRemovalCanvas");
+        handExtractorCanvasElement = document.getElementById("handExtractorCanvas");
         uiAdapter.bindStreamToCanvas(Kinect.USERVIEWER_STREAM_NAME, userViewerCanvasElement);
         uiAdapter.bindStreamToCanvas(Kinect.BACKGROUNDREMOVAL_STREAM_NAME, backgroundRemovalCanvasElement);
+        uiAdapter.bindStreamToCanvas(Kinect.HAND_EXTRACTOR_STREAM_NAME, handExtractorCanvasElement);
 
         sensor.addEventHandler(function(event) {
             switch (event.category) {
@@ -516,6 +527,7 @@
             <img id="backgroundImg" src="Images\beach.jpg" />
             <canvas id="userViewerCanvas" class="streamImageCanvas"></canvas>
             <canvas id="backgroundRemovalCanvas" class="streamImageCanvas"></canvas>
+            <canvas id="handExtractorCanvas" class="streamImageCanvas"></canvas>
         </div>
         <div id="buttonContainer">
             <div id="choosePanel">
